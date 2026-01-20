@@ -13,6 +13,8 @@ Type what you want to do in plain English, and `x` generates and runs the shell 
 
 ## Installation
 
+### macOS
+
 ```bash
 # 1. Install Ollama
 brew install ollama
@@ -24,7 +26,20 @@ ollama pull llama3.2
 curl -sSL https://raw.githubusercontent.com/abhisheksaran/x/main/install.sh | bash
 ```
 
-Or manually:
+### Ubuntu / Debian
+
+```bash
+# 1. Install Ollama
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# 2. Pull a model
+ollama pull llama3.2
+
+# 3. Install x
+curl -sSL https://raw.githubusercontent.com/abhisheksaran/x/main/install.sh | bash
+```
+
+### Manual Installation
 
 ```bash
 git clone git@github.com:abhisheksaran/x.git

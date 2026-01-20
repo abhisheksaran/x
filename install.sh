@@ -21,11 +21,31 @@ fi
 chmod +x /tmp/x
 sudo mv /tmp/x "$INSTALL_DIR/x"
 
+# Detect OS
+detect_os() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "macos"
+    elif [[ -f /etc/os-release ]]; then
+        . /etc/os-release
+        echo "$ID"
+    else
+        echo "unknown"
+    fi
+}
+
+OS_TYPE=$(detect_os)
+
 echo ""
 echo "✓ Installed x to $INSTALL_DIR/x"
 echo ""
 echo "Make sure Ollama is installed and running:"
-echo "  brew install ollama"
+if [[ "$OS_TYPE" == "macos" ]]; then
+    echo "  brew install ollama"
+elif [[ "$OS_TYPE" == "ubuntu" ]] || [[ "$OS_TYPE" == "debian" ]]; then
+    echo "  curl -fsSL https://ollama.ai/install.sh | sh"
+else
+    echo "  curl -fsSL https://ollama.ai/install.sh | sh"
+fi
 echo "  ollama pull llama3.2"
 echo ""
 echo "Then try:"

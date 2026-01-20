@@ -34,7 +34,9 @@ if [[ "${1:-}" == "--help" ]] || [[ "${1:-}" == "-h" ]]; then
     echo "  OLLAMA_MODEL  Set the model to use (default: $DEFAULT_MODEL)"
     echo ""
     echo "Requires: Ollama (https://ollama.ai)"
-    echo "Install:  brew install ollama && ollama pull $DEFAULT_MODEL"
+    echo "Install:"
+    echo "  macOS:  brew install ollama && ollama pull $DEFAULT_MODEL"
+    echo "  Linux:  curl -fsSL https://ollama.ai/install.sh | sh && ollama pull $DEFAULT_MODEL"
     exit 0
 fi
 
@@ -55,12 +57,33 @@ if [[ "${1:-}" == "--models" ]]; then
     exit 0
 fi
 
+# Detect OS
+detect_os() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "macos"
+    elif [[ -f /etc/os-release ]]; then
+        . /etc/os-release
+        echo "$ID"
+    else
+        echo "unknown"
+    fi
+}
+
+OS_TYPE=$(detect_os)
+
 # Check if Ollama is installed
 if ! command -v ollama &> /dev/null; then
     echo -e "${RED}Error: Ollama is not installed${NC}"
     echo ""
     echo "Install Ollama:"
-    echo "  brew install ollama"
+    if [[ "$OS_TYPE" == "macos" ]]; then
+        echo "  brew install ollama"
+    elif [[ "$OS_TYPE" == "ubuntu" ]] || [[ "$OS_TYPE" == "debian" ]]; then
+        echo "  curl -fsSL https://ollama.ai/install.sh | sh"
+    else
+        echo "  curl -fsSL https://ollama.ai/install.sh | sh"
+        echo "  (or visit https://ollama.ai for installation instructions)"
+    fi
     echo ""
     echo "Then pull a model:"
     echo "  ollama pull $DEFAULT_MODEL"
@@ -74,7 +97,11 @@ if ! ollama list &> /dev/null; then
     echo "Start Ollama:"
     echo "  ollama serve"
     echo ""
-    echo "Or on macOS, just open the Ollama app."
+    if [[ "$OS_TYPE" == "macos" ]]; then
+        echo "Or on macOS, just open the Ollama app."
+    elif [[ "$OS_TYPE" == "ubuntu" ]] || [[ "$OS_TYPE" == "debian" ]]; then
+        echo "On Ubuntu/Debian, you can also run: sudo systemctl start ollama"
+    fi
     exit 1
 fi
 
